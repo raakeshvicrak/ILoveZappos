@@ -37,6 +37,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/toolbar"
+                android:background="@mipmap/zapposmobile"
                 app:image_url="@{productPojo.thumbnailImageUrl}"/>
 
             <RelativeLayout
@@ -49,10 +50,12 @@
 
                 <TextView
                     android:id="@+id/brandName"
+                    android:transitionName="brandName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textStyle="bold"
                     android:textSize="25dp"
+                    android:maxLength="10"
                     android:text="@={productPojo.brandName}"/>
 
                 <TextView
@@ -77,6 +80,7 @@
 
                 <TextView
                     android:id="@+id/productName"
+                    android:transitionName="productName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@={productPojo.productName}"/>

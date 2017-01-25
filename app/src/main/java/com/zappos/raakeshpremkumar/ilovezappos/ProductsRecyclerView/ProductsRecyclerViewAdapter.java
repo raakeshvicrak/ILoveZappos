@@ -1,10 +1,12 @@
 package com.zappos.raakeshpremkumar.ilovezappos.ProductsRecyclerView;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Bundle;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.util.Log;
@@ -32,7 +34,7 @@ import java.util.ArrayList;
 
 public class ProductsRecyclerViewAdapter extends RecyclerView.Adapter<ProductsRecyclerViewAdapter.ProductsViewHolder> {
 
-    private Context context;
+    private Activity activity;
     public static ArrayList<Products> products;
     private int rowLayout;
 
@@ -46,9 +48,9 @@ public class ProductsRecyclerViewAdapter extends RecyclerView.Adapter<ProductsRe
         private TextView productName;
         private TextView priceBefore;
         private TextView priceAfter;
-        private Context context;
+        private Activity activity;
 
-        public ProductsViewHolder(View view, Context context){
+        public ProductsViewHolder(View view, Activity activity){
             super(view);
             productLayout = (LinearLayout) view.findViewById(R.id.productLayout);
             sale = (TextView) view.findViewById(R.id.sale);
@@ -58,7 +60,7 @@ public class ProductsRecyclerViewAdapter extends RecyclerView.Adapter<ProductsRe
             productName = (TextView) view.findViewById(R.id.productName);
             priceBefore = (TextView) view.findViewById(R.id.priceBefore);
             priceAfter = (TextView) view.findViewById(R.id.priceAfter);
-            this.context = context;
+            this.activity = activity;
 
             productLayout.setOnClickListener(this);
         }
@@ -68,14 +70,19 @@ public class ProductsRecyclerViewAdapter extends RecyclerView.Adapter<ProductsRe
         public void onClick(View view) {
             ProductPojo productPojo = new ProductPojo(products.get(getAdapterPosition()));
 
-            Intent intent = new Intent(this.context, ProductActivity.class);
+            Intent intent = new Intent(this.activity, ProductActivity.class);
             intent.putExtra("product", productPojo);
-            this.context.startActivity(intent);
+
+            ActivityOptionsCompat options = ActivityOptionsCompat.
+                    makeSceneTransitionAnimation(activity, (View)productImage, "productImageTransition");
+
+
+            this.activity.startActivity(intent, options.toBundle());
         }
     }
 
-    public ProductsRecyclerViewAdapter(Context context, ArrayList<Products> products, int rowLayout){
-        this.context = context;
+    public ProductsRecyclerViewAdapter(Activity activity, ArrayList<Products> products, int rowLayout){
+        this.activity = activity;
         this.products = products;
         this.rowLayout = rowLayout;
     }
@@ -83,7 +90,7 @@ public class ProductsRecyclerViewAdapter extends RecyclerView.Adapter<ProductsRe
     @Override
     public ProductsViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(rowLayout, parent, false);
-        return new ProductsViewHolder(view, context);
+        return new ProductsViewHolder(view, activity);
     }
 
     @SuppressWarnings("deprecation")
@@ -97,26 +104,26 @@ public class ProductsRecyclerViewAdapter extends RecyclerView.Adapter<ProductsRe
             holder.sale.setVisibility(View.INVISIBLE);
 
             holder.discount.setText("NEW!");
-            holder.discount.setTextColor(context.getResources().getColor(R.color.blue));
+            holder.discount.setTextColor(activity.getResources().getColor(R.color.blue));
 
             holder.priceAfter.setText(product_object.getPrice());
-            holder.priceAfter.setTextColor(context.getResources().getColor(R.color.green));
+            holder.priceAfter.setTextColor(activity.getResources().getColor(R.color.green));
         }
         else{
             holder.sale.setVisibility(View.VISIBLE);
 
             holder.discount.setText(product_object.getPercentOff()+" OFF!");
-            holder.discount.setTextColor(context.getResources().getColor(R.color.red));
+            holder.discount.setTextColor(activity.getResources().getColor(R.color.red));
 
             holder.priceBefore.setText(product_object.getOriginalPrice());
             holder.priceBefore.setPaintFlags(holder.priceBefore.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
 
             holder.priceAfter.setText(product_object.getPrice());
-            holder.priceAfter.setTextColor(context.getResources().getColor(R.color.red));
+            holder.priceAfter.setTextColor(activity.getResources().getColor(R.color.red));
         }
 
         // Load the Image of the product.
-        Glide.with(context).load(product_object.getThumbnailImageUrl()).into(holder.productImage);
+        Glide.with(activity).load(product_object.getThumbnailImageUrl()).into(holder.productImage);
 
         holder.brandName.setText(Html.fromHtml(product_object.getBrandName()));
 

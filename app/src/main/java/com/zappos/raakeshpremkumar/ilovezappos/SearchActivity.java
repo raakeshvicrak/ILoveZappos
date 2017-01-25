@@ -86,7 +86,7 @@ public class SearchActivity extends AppCompatActivity {
                         for (Products productstemp: products){
                             Log.e("response ", productstemp.getProductName());
                         }*/
-                        products_recyclerView.setAdapter(new ProductsRecyclerViewAdapter(getApplicationContext(), products, R.layout.products_list_item));
+                        products_recyclerView.setAdapter(new ProductsRecyclerViewAdapter(SearchActivity.this, products, R.layout.products_list_item));
                     }
 
                     @Override
