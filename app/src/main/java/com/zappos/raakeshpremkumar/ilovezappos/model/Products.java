@@ -17,6 +17,8 @@ public class Products {
     private String productUrl;
     private String productName;
 
+    public Products(){}
+
     public Products(String brandName, String thumbnailImageUrl, long productId, String originalPrice, long styleId, long colorId,
                     String price, String percentOff, String productUrl, String productName){
         this.brandName = brandName;

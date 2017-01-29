@@ -1,5 +1,6 @@
 package com.zappos.raakeshpremkumar.ilovezappos;
 
+import android.content.ContentValues;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -23,6 +24,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.zappos.raakeshpremkumar.ilovezappos.DB.DataBaseManager;
+import com.zappos.raakeshpremkumar.ilovezappos.DB.DataBaseQuery;
 import com.zappos.raakeshpremkumar.ilovezappos.ProductsRecyclerView.ProductsRecyclerViewAdapter;
 import com.zappos.raakeshpremkumar.ilovezappos.Utils.NetworkUtil;
 import com.zappos.raakeshpremkumar.ilovezappos.model.ProductAPIResponse;
@@ -42,6 +45,7 @@ public class SearchActivity extends AppCompatActivity {
     private final static String API_KEY = "b743e26728e16b81da139182bb2094357c31d331";
     private View parentLayout;
     private RecyclerView products_recyclerView;
+    private DataBaseManager databaseManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,7 +73,7 @@ public class SearchActivity extends AppCompatActivity {
         searchEditText.setOnEditorActionListener(new OnEditorActionListener());
     }
 
-    private void executeRestApiSearch(String searchTerm){
+    private void executeRestApiSearch(final String searchTerm){
         if (API_KEY.isEmpty()){
             Toast.makeText(SearchActivity.this, "API Key is empty!", Toast.LENGTH_LONG).show();
         }
@@ -87,6 +91,7 @@ public class SearchActivity extends AppCompatActivity {
                         for (Products productstemp: products){
                             Log.e("response ", productstemp.getProductName());
                         }
+                        updateOrInsertDb(products, searchTerm);
                         products_recyclerView.setAdapter(new ProductsRecyclerViewAdapter(SearchActivity.this, products, R.layout.products_list_item));
                     }
 
@@ -101,6 +106,28 @@ public class SearchActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
 
+        }
+    }
+
+    private void updateOrInsertDb(ArrayList<Products> products, String searchTerm){
+        for (Products product : products){
+            ContentValues contentValues = new ContentValues();
+            contentValues.put(DataBaseQuery.PRODUCT_ID, product.getProductId());
+            contentValues.put(DataBaseQuery.BRAND_NAME, product.getBrandName());
+            contentValues.put(DataBaseQuery.COLOR_ID, product.getColorId());
+            contentValues.put(DataBaseQuery.ORIGINAL_PRICE, product.getOriginalPrice());
+            contentValues.put(DataBaseQuery.PERCENT_OFF, product.getPercentOff());
+            contentValues.put(DataBaseQuery.PRICE, product.getPrice());
+            contentValues.put(DataBaseQuery.PRODUCT_NAME, product.getProductName());
+            contentValues.put(DataBaseQuery.PRODUCT_URL, product.getProductUrl());
+            contentValues.put(DataBaseQuery.STYLE_ID, product.getStyleId());
+            contentValues.put(DataBaseQuery.THUMBNAIL_IMAGE_URL, product.getThumbnailImageUrl());
+            contentValues.put(DataBaseQuery.SEARCH_TERM, searchTerm);
+
+            databaseManager.getInstance(SearchActivity.this).insertProductDetails(contentValues);
+        }
+        if(databaseManager != null){
+            databaseManager.close();
         }
     }
 

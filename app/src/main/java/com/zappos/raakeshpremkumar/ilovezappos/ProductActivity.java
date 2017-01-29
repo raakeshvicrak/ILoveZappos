@@ -1,8 +1,6 @@
 package com.zappos.raakeshpremkumar.ilovezappos;
 
-import android.app.Dialog;
 import android.content.Intent;
-import android.content.res.ColorStateList;
 import android.databinding.DataBindingUtil;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
@@ -10,7 +8,6 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -23,7 +20,12 @@ import android.view.animation.AnimationUtils;
 import android.widget.TextView;
 
 import com.zappos.raakeshpremkumar.ilovezappos.Binding.ProductPojo;
+import com.zappos.raakeshpremkumar.ilovezappos.DB.DataBaseManager;
+import com.zappos.raakeshpremkumar.ilovezappos.DB.DataBaseQuery;
 import com.zappos.raakeshpremkumar.ilovezappos.databinding.ContentProductBinding;
+import com.zappos.raakeshpremkumar.ilovezappos.model.Products;
+
+import java.util.ArrayList;
 
 public class ProductActivity extends AppCompatActivity {
 
@@ -35,7 +37,6 @@ public class ProductActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //setContentView(R.layout.activity_product);
 
         ContentProductBinding contentProductBinding = DataBindingUtil.setContentView(this, R.layout.content_product);
 
@@ -47,8 +48,12 @@ public class ProductActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
 
+        //get the url from deep linking
         Uri data = intent.getData();
+
         if(data == null){
+
+            //getting the data from previous activity
             Bundle bundle = intent.getExtras();
             productPojo = (ProductPojo) bundle.getSerializable("product");
 
@@ -58,9 +63,15 @@ public class ProductActivity extends AppCompatActivity {
             }
             contentProductBinding.setProductPojo(productPojo);
         }
-
-
-
+        else{
+            Log.e("last segment ",data.getLastPathSegment());
+            ArrayList<Products> products_list = DataBaseManager.getInstance(ProductActivity.this).retrieveTablerows(DataBaseQuery.TABLE_PRODUCT_DETAILS,
+                    DataBaseQuery.PRODUCT_ID, new String[]{data.getLastPathSegment()});
+            if (products_list.size() > 0){
+                productPojo = new ProductPojo(products_list.get(0));
+                contentProductBinding.setProductPojo(productPojo);
+            }
+        }
 
         fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -85,7 +96,7 @@ public class ProductActivity extends AppCompatActivity {
                     fab.setImageResource(R.drawable.shoppingcart);
                 }
 
-                //a bit animation of popping up.
+                // animation of popping up.
                 fab.clearAnimation();
                 Animation animation1 = AnimationUtils.loadAnimation(ProductActivity.this, R.anim.pop_up);
                 fab.startAnimation(animation1);
