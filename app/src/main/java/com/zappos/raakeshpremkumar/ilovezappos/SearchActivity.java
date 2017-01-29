@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -54,7 +55,7 @@ public class SearchActivity extends AppCompatActivity {
         parentLayout = findViewById(R.id.rootview);
         products_recyclerView = (RecyclerView) findViewById(R.id.productsview);
 
-        products_recyclerView.setLayoutManager(new GridLayoutManager(this, 2));
+        products_recyclerView.setLayoutManager(new StaggeredGridLayoutManager(2, 1));
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -82,10 +83,10 @@ public class SearchActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(Call<ProductAPIResponse> call, Response<ProductAPIResponse> response) {
                         ArrayList<Products> products = response.body().getResults();
-                        /*Toast.makeText(SearchActivity.this, "Number of products "+products.size(), Toast.LENGTH_LONG).show();
+                        Toast.makeText(SearchActivity.this, "Number of products "+products.size(), Toast.LENGTH_LONG).show();
                         for (Products productstemp: products){
                             Log.e("response ", productstemp.getProductName());
-                        }*/
+                        }
                         products_recyclerView.setAdapter(new ProductsRecyclerViewAdapter(SearchActivity.this, products, R.layout.products_list_item));
                     }
 
@@ -131,7 +132,7 @@ public class SearchActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_share) {
             return true;
         }
 
