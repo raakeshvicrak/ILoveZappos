@@ -7,6 +7,7 @@ import android.databinding.DataBindingUtil;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -45,14 +46,21 @@ public class ProductActivity extends AppCompatActivity {
         priceBefore.setPaintFlags(priceBefore.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
 
         Intent intent = getIntent();
-        Bundle bundle = intent.getExtras();
-        productPojo = (ProductPojo) bundle.getSerializable("product");
 
-        Log.e("productpojo ", productPojo.getBrandName());
-        if (contentProductBinding == null){
-            Log.e("null cont", "null");
+        Uri data = intent.getData();
+        if(data == null){
+            Bundle bundle = intent.getExtras();
+            productPojo = (ProductPojo) bundle.getSerializable("product");
+
+            Log.e("productpojo ", productPojo.getBrandName());
+            if (contentProductBinding == null){
+                Log.e("null cont", "null");
+            }
+            contentProductBinding.setProductPojo(productPojo);
         }
-        contentProductBinding.setProductPojo(productPojo);
+
+
+
 
         fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
