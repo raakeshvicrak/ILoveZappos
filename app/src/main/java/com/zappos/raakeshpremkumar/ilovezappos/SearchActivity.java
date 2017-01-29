@@ -91,8 +91,8 @@ public class SearchActivity extends AppCompatActivity {
                         for (Products productstemp: products){
                             Log.e("response ", productstemp.getProductName());
                         }
-                        updateOrInsertDb(products, searchTerm);
                         products_recyclerView.setAdapter(new ProductsRecyclerViewAdapter(SearchActivity.this, products, R.layout.products_list_item));
+                        updateOrInsertDb(products, searchTerm);
                     }
 
                     @Override

@@ -52,7 +52,6 @@ public class ProductActivity extends AppCompatActivity {
         Uri data = intent.getData();
 
         if(data == null){
-
             //getting the data from previous activity
             Bundle bundle = intent.getExtras();
             productPojo = (ProductPojo) bundle.getSerializable("product");

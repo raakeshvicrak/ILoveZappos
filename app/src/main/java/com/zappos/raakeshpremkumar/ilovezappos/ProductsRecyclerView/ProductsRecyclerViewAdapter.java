@@ -106,6 +106,8 @@ public class ProductsRecyclerViewAdapter extends RecyclerView.Adapter<ProductsRe
             holder.discount.setText("NEW!");
             holder.discount.setTextColor(activity.getResources().getColor(R.color.blue));
 
+            holder.priceBefore.setVisibility(View.GONE);
+
             holder.priceAfter.setText(product_object.getPrice());
             holder.priceAfter.setTextColor(activity.getResources().getColor(R.color.green));
         }
