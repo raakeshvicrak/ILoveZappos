@@ -25,7 +25,7 @@
         jumboMode="true"
         optimize="true"
         revision="25.0.1"
-        sha1="00cc0992535d1f2ab9a543c1e756dc2bc2048daf">
+        sha1="24fd1718d77294f7a255c0574cde098f3f94ca69">
         <dex dex="/Users/raakeshpremkumar/Downloads/ILoveZappos/app/build/intermediates/transforms/dex/debug/folders/1000/10/instant-run_59e9280ec77293e9f53c28eb486b11b07603cf64/classes.dex" />
     </item>
     <item
@@ -43,7 +43,7 @@
         jumboMode="true"
         optimize="true"
         revision="25.0.1"
-        sha1="3fe85a997fc25e507a53b3736b0234d788f72883">
+        sha1="26fa95b5a77971a8b57b4793472a0f975613c27b">
         <dex dex="/Users/raakeshpremkumar/Downloads/ILoveZappos/app/build/intermediates/transforms/dex/debug/folders/1000/10/instant-run-bootstrap_9d0934444318ec9250dad7e4e87005e4464e8d51/classes.dex" />
     </item>
     <item

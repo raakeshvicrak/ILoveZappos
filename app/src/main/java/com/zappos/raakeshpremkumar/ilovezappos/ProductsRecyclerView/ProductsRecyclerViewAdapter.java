@@ -87,6 +87,10 @@ public class ProductsRecyclerViewAdapter extends RecyclerView.Adapter<ProductsRe
         this.rowLayout = rowLayout;
     }
 
+    public void setProducts(ArrayList<Products> products){
+        this.products = products;
+    }
+
     @Override
     public ProductsViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(rowLayout, parent, false);

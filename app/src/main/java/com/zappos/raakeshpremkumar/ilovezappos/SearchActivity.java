@@ -51,6 +51,8 @@ public class SearchActivity extends AppCompatActivity {
     private RecyclerView products_recyclerView;
     private DataBaseManager databaseManager;
     private ImageView clearButton;
+    private static boolean searchMade = false;
+    private ProductsRecyclerViewAdapter productsRecyclerViewAdapter = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,9 +67,9 @@ public class SearchActivity extends AppCompatActivity {
         products_recyclerView = (RecyclerView) findViewById(R.id.productsview);
         clearButton = (ImageView) findViewById(R.id.clearButton);
 
-        executeRestApiSearch("");
-
         products_recyclerView.setLayoutManager(new StaggeredGridLayoutManager(2, 1));
+
+        loadProducts();
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -81,6 +83,41 @@ public class SearchActivity extends AppCompatActivity {
         searchEditText.setOnEditorActionListener(new OnEditorActionListener());
 
         clearButton.setOnClickListener(new onClearActionListener());
+    }
+
+    public void loadProducts(){
+
+        ArrayList<Products> products_list = DataBaseManager.getInstance(SearchActivity.this).retrieveTablerows(DataBaseQuery.TABLE_PRODUCT_DETAILS,
+                DataBaseQuery.VIEWED, new String[]{"true"});
+
+        if (products_list.size() > 0){
+
+            if (productsRecyclerViewAdapter == null){
+                productsRecyclerViewAdapter = new ProductsRecyclerViewAdapter(SearchActivity.this, products_list, R.layout.products_list_item);
+                products_recyclerView.setAdapter(productsRecyclerViewAdapter);
+            }
+            else{
+                productsRecyclerViewAdapter.setProducts(products_list);
+                productsRecyclerViewAdapter.notifyDataSetChanged();
+            }
+
+            InputMethodManager imm = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
+            imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
+        }
+        else{
+            executeRestApiSearch("");
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (searchMade == true){
+            searchMade = false;
+            loadProducts();
+        }
+        else{
+            super.onBackPressed();
+        }
     }
 
     private void executeRestApiSearch(final String searchTerm){
@@ -101,7 +138,16 @@ public class SearchActivity extends AppCompatActivity {
                         for (Products productstemp: products){
                             Log.e("response ", productstemp.getProductName());
                         }
-                        products_recyclerView.setAdapter(new ProductsRecyclerViewAdapter(SearchActivity.this, products, R.layout.products_list_item));
+
+                        if (productsRecyclerViewAdapter == null){
+                            productsRecyclerViewAdapter = new ProductsRecyclerViewAdapter(SearchActivity.this, products, R.layout.products_list_item);
+                            products_recyclerView.setAdapter(productsRecyclerViewAdapter);
+                        }
+                        else{
+                            productsRecyclerViewAdapter.setProducts(products);
+                            productsRecyclerViewAdapter.notifyDataSetChanged();
+                        }
+
                         updateOrInsertDb(products, searchTerm);
 
                         InputMethodManager imm = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
@@ -120,7 +166,15 @@ public class SearchActivity extends AppCompatActivity {
                 ArrayList<Products> products_list = DataBaseManager.getInstance(SearchActivity.this).retrieveTablerows(DataBaseQuery.TABLE_PRODUCT_DETAILS,
                         DataBaseQuery.SEARCH_TERM, new String[]{searchTerm});
 
-                products_recyclerView.setAdapter(new ProductsRecyclerViewAdapter(SearchActivity.this, products_list, R.layout.products_list_item));
+                if (productsRecyclerViewAdapter == null){
+                    productsRecyclerViewAdapter = new ProductsRecyclerViewAdapter(SearchActivity.this, products_list, R.layout.products_list_item);
+                    products_recyclerView.setAdapter(productsRecyclerViewAdapter);
+                }
+                else{
+                    productsRecyclerViewAdapter.setProducts(products_list);
+                    productsRecyclerViewAdapter.notifyDataSetChanged();
+                }
+
                 updateOrInsertDb(products_list, searchTerm);
 
                 InputMethodManager imm = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
@@ -148,9 +202,7 @@ public class SearchActivity extends AppCompatActivity {
 
             databaseManager.getInstance(SearchActivity.this).insertProductDetails(contentValues);
         }
-        if(databaseManager != null){
-            databaseManager.close();
-        }
+
     }
 
     /*
@@ -161,6 +213,7 @@ public class SearchActivity extends AppCompatActivity {
         @Override
         public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
             if (i == EditorInfo.IME_ACTION_SEARCH){
+                searchMade = true;
                 executeRestApiSearch(searchEditText.getText().toString());
             }
             return false;
