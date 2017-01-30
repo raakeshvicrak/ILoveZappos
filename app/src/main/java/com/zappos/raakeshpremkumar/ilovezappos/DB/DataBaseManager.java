@@ -69,12 +69,17 @@ public class DataBaseManager extends SQLiteOpenHelper {
     public synchronized void insertProductDetails(ContentValues contentValues){
         Cursor cursor=getDatabase().rawQuery("SELECT * FROM " + DataBaseQuery.TABLE_PRODUCT_DETAILS + " WHERE " +
                 DataBaseQuery.PRODUCT_ID + " =? ", new String[]{String.valueOf(contentValues.get(DataBaseQuery.PRODUCT_ID))});
+        if(cursor.getCount()==0){
+            long insert_result=getDatabase().insert(DataBaseQuery.TABLE_PRODUCT_DETAILS, null, contentValues);
+        }
+    }
+
+    public synchronized void updateProductDetails(ContentValues contentValues){
+        Cursor cursor=getDatabase().rawQuery("SELECT * FROM " + DataBaseQuery.TABLE_PRODUCT_DETAILS + " WHERE " +
+                DataBaseQuery.PRODUCT_ID + " =? ", new String[]{String.valueOf(contentValues.get(DataBaseQuery.PRODUCT_ID))});
         if(cursor.getCount()>0){
             long update_result=getDatabase().update(DataBaseQuery.TABLE_PRODUCT_DETAILS, contentValues,
                     DataBaseQuery.PRODUCT_ID+"=?", new String[]{String.valueOf(contentValues.get(DataBaseQuery.PRODUCT_ID))});
-        }
-        else{
-            long insert_result=getDatabase().insert(DataBaseQuery.TABLE_PRODUCT_DETAILS, null, contentValues);
         }
     }
 

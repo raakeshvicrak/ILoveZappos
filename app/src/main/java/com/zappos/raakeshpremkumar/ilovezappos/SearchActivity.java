@@ -1,5 +1,6 @@
 package com.zappos.raakeshpremkumar.ilovezappos;
 
+import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
@@ -20,7 +21,10 @@ import android.view.MenuItem;
 import android.view.WindowManager;
 import android.view.animation.TranslateAnimation;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -46,6 +50,7 @@ public class SearchActivity extends AppCompatActivity {
     private View parentLayout;
     private RecyclerView products_recyclerView;
     private DataBaseManager databaseManager;
+    private ImageView clearButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +63,9 @@ public class SearchActivity extends AppCompatActivity {
         searchEditText = (EditText) findViewById(R.id.searchEditText);
         parentLayout = findViewById(R.id.rootview);
         products_recyclerView = (RecyclerView) findViewById(R.id.productsview);
+        clearButton = (ImageView) findViewById(R.id.clearButton);
+
+        executeRestApiSearch("");
 
         products_recyclerView.setLayoutManager(new StaggeredGridLayoutManager(2, 1));
 
@@ -71,6 +79,8 @@ public class SearchActivity extends AppCompatActivity {
         });
 
         searchEditText.setOnEditorActionListener(new OnEditorActionListener());
+
+        clearButton.setOnClickListener(new onClearActionListener());
     }
 
     private void executeRestApiSearch(final String searchTerm){
@@ -93,6 +103,9 @@ public class SearchActivity extends AppCompatActivity {
                         }
                         products_recyclerView.setAdapter(new ProductsRecyclerViewAdapter(SearchActivity.this, products, R.layout.products_list_item));
                         updateOrInsertDb(products, searchTerm);
+
+                        InputMethodManager imm = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
+                        imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
                     }
 
                     @Override
@@ -104,6 +117,14 @@ public class SearchActivity extends AppCompatActivity {
             else{
                 Snackbar.make(parentLayout, "No Internet Connectivity!", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
+                ArrayList<Products> products_list = DataBaseManager.getInstance(SearchActivity.this).retrieveTablerows(DataBaseQuery.TABLE_PRODUCT_DETAILS,
+                        DataBaseQuery.SEARCH_TERM, new String[]{searchTerm});
+
+                products_recyclerView.setAdapter(new ProductsRecyclerViewAdapter(SearchActivity.this, products_list, R.layout.products_list_item));
+                updateOrInsertDb(products_list, searchTerm);
+
+                InputMethodManager imm = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
+                imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
             }
 
         }
@@ -123,6 +144,7 @@ public class SearchActivity extends AppCompatActivity {
             contentValues.put(DataBaseQuery.STYLE_ID, product.getStyleId());
             contentValues.put(DataBaseQuery.THUMBNAIL_IMAGE_URL, product.getThumbnailImageUrl());
             contentValues.put(DataBaseQuery.SEARCH_TERM, searchTerm);
+            contentValues.put(DataBaseQuery.VIEWED, "false");
 
             databaseManager.getInstance(SearchActivity.this).insertProductDetails(contentValues);
         }
@@ -142,6 +164,14 @@ public class SearchActivity extends AppCompatActivity {
                 executeRestApiSearch(searchEditText.getText().toString());
             }
             return false;
+        }
+    }
+
+    class onClearActionListener implements View.OnClickListener{
+
+        @Override
+        public void onClick(View view) {
+            searchEditText.setText("");
         }
     }
 

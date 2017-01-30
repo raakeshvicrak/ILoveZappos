@@ -1,5 +1,6 @@
 package com.zappos.raakeshpremkumar.ilovezappos;
 
+import android.content.ContentValues;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.graphics.Paint;
@@ -33,6 +34,7 @@ public class ProductActivity extends AppCompatActivity {
     private FloatingActionButton fab;
     private boolean addedToCart = false;
     private ProductPojo productPojo;
+    private DataBaseManager databaseManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,6 +72,17 @@ public class ProductActivity extends AppCompatActivity {
                 productPojo = new ProductPojo(products_list.get(0));
                 contentProductBinding.setProductPojo(productPojo);
             }
+        }
+
+        if(productPojo != null){
+            ContentValues contentValues = new ContentValues();
+            contentValues.put(DataBaseQuery.PRODUCT_ID, productPojo.getProductId());
+            contentValues.put(DataBaseQuery.VIEWED, "true");
+            databaseManager.getInstance(ProductActivity.this).updateProductDetails(contentValues);
+        }
+
+        if(databaseManager != null){
+            databaseManager.close();
         }
 
         fab = (FloatingActionButton) findViewById(R.id.fab);
