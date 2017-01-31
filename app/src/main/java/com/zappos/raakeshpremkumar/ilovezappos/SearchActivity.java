@@ -5,6 +5,7 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.speech.RecognizerIntent;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -13,6 +14,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -22,6 +25,7 @@ import android.view.WindowManager;
 import android.view.animation.TranslateAnimation;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -50,10 +54,11 @@ public class SearchActivity extends AppCompatActivity {
     private View parentLayout;
     private RecyclerView products_recyclerView;
     private DataBaseManager databaseManager;
-    private ImageView clearButton;
+    private ImageView clearButton, voiceButton;
     private static boolean searchMade = false;
     private ProductsRecyclerViewAdapter productsRecyclerViewAdapter = null;
     private Toolbar toolbar;
+    private int REQUEST_CODE = 6;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,6 +87,7 @@ public class SearchActivity extends AppCompatActivity {
         parentLayout = findViewById(R.id.rootview);
         products_recyclerView = (RecyclerView) findViewById(R.id.productsview);
         clearButton = (ImageView) findViewById(R.id.clearButton);
+        voiceButton = (ImageView) findViewById(R.id.voiceButton);
 
         products_recyclerView.setLayoutManager(new StaggeredGridLayoutManager(2, 1));
 
@@ -99,6 +105,60 @@ public class SearchActivity extends AppCompatActivity {
         searchEditText.setOnEditorActionListener(new OnEditorActionListener());
 
         clearButton.setOnClickListener(new onClearActionListener());
+
+        voiceButton.setOnClickListener(new onVoiceActionListener());
+
+        searchEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                if (editable.length() > 0){
+                    voiceButton.setVisibility(View.GONE);
+                    clearButton.setVisibility(View.VISIBLE);
+                }
+                else{
+                    voiceButton.setVisibility(View.VISIBLE);
+                    clearButton.setVisibility(View.GONE);
+                }
+            }
+        });
+    }
+
+    public class onVoiceActionListener implements View.OnClickListener{
+
+        @Override
+        public void onClick(View view) {
+            Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+            intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+                    RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+            intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Voice recognition Demo...");
+            startActivityForResult(intent, REQUEST_CODE);
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data){
+        if (requestCode == REQUEST_CODE && resultCode == RESULT_OK){
+            // Populate the wordsList with the String values the recognition engine thought it heard
+            ArrayList<String> matches = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+            searchEditText.setText(matches.get(0));
+            searchEditText.setSelection(matches.get(0).length());
+
+            searchMade = true;
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setDisplayShowHomeEnabled(true);
+
+            executeRestApiSearch(searchEditText.getText().toString());
+        }
     }
 
     public void loadProducts(){

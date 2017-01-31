@@ -32,13 +32,27 @@
 
     </android.support.design.widget.TextInputLayout>
 
-    <ImageView
-        android:id="@+id/clearButton"
-        android:src="@drawable/clear"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:tint="@color/red"
-        android:layout_gravity="end"
-        android:layout_weight="1"/>
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1">
+
+        <ImageView
+            android:id="@+id/clearButton"
+            android:src="@drawable/clear"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:tint="@color/red"
+            android:visibility="gone"
+            android:layout_gravity="end" />
+        
+        <ImageView
+            android:id="@+id/voiceButton"
+            android:src="@drawable/voice"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="end"/>
+
+    </FrameLayout>
 
 </LinearLayout>
