@@ -53,14 +53,30 @@ public class SearchActivity extends AppCompatActivity {
     private ImageView clearButton;
     private static boolean searchMade = false;
     private ProductsRecyclerViewAdapter productsRecyclerViewAdapter = null;
+    private Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (searchMade == true){
+                    searchMade = false;
+                    getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+                    getSupportActionBar().setDisplayShowHomeEnabled(false);
+                    loadProducts();
+                }
+                else{
+                    SearchActivity.super.onBackPressed();
+                }
+            }
+        });
 
         searchEditText = (EditText) findViewById(R.id.searchEditText);
         parentLayout = findViewById(R.id.rootview);
@@ -113,6 +129,8 @@ public class SearchActivity extends AppCompatActivity {
     public void onBackPressed() {
         if (searchMade == true){
             searchMade = false;
+            getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+            getSupportActionBar().setDisplayShowHomeEnabled(false);
             loadProducts();
         }
         else{
@@ -214,6 +232,8 @@ public class SearchActivity extends AppCompatActivity {
         public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
             if (i == EditorInfo.IME_ACTION_SEARCH){
                 searchMade = true;
+                getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+                getSupportActionBar().setDisplayShowHomeEnabled(true);
                 executeRestApiSearch(searchEditText.getText().toString());
             }
             return false;
