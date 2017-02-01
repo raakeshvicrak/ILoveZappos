@@ -65,7 +65,6 @@ public class ProductsRecyclerViewAdapter extends RecyclerView.Adapter<ProductsRe
             productLayout.setOnClickListener(this);
         }
 
-
         @Override
         public void onClick(View view) {
             ProductPojo productPojo = new ProductPojo(products.get(getAdapterPosition()));
@@ -140,6 +139,5 @@ public class ProductsRecyclerViewAdapter extends RecyclerView.Adapter<ProductsRe
     public int getItemCount() {
         return products.size();
     }
-
 
 }

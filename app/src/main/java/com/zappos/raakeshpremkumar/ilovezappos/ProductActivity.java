@@ -1,5 +1,6 @@
 package com.zappos.raakeshpremkumar.ilovezappos;
 
+import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
@@ -10,6 +11,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -18,23 +20,32 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.zappos.raakeshpremkumar.ilovezappos.Binding.ProductPojo;
 import com.zappos.raakeshpremkumar.ilovezappos.DB.DataBaseManager;
 import com.zappos.raakeshpremkumar.ilovezappos.DB.DataBaseQuery;
+import com.zappos.raakeshpremkumar.ilovezappos.ProductsRecyclerView.ProductsRecyclerViewAdapter;
+import com.zappos.raakeshpremkumar.ilovezappos.ProductsRecyclerView.SimilarProductsRecyclerViewAdapter;
 import com.zappos.raakeshpremkumar.ilovezappos.databinding.ContentProductBinding;
 import com.zappos.raakeshpremkumar.ilovezappos.model.Products;
+import com.zappos.raakeshpremkumar.ilovezappos.rest.ApiResultInterface;
+import com.zappos.raakeshpremkumar.ilovezappos.rest.ExecuteRestApiSearch;
 
 import java.util.ArrayList;
 
-public class ProductActivity extends AppCompatActivity {
+public class ProductActivity extends AppCompatActivity implements ApiResultInterface {
 
     private TextView priceBefore;
     private FloatingActionButton fab;
     private boolean addedToCart = false;
     private ProductPojo productPojo;
     private DataBaseManager databaseManager;
+    private RecyclerView similarProducts;
+    private SimilarProductsRecyclerViewAdapter similarProductsRecyclerViewAdapter = null;
+    private View rootView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +68,8 @@ public class ProductActivity extends AppCompatActivity {
 
         priceBefore = (TextView) findViewById(R.id.priceBefore);
         priceBefore.setPaintFlags(priceBefore.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+        similarProducts = (RecyclerView) findViewById(R.id.similarProducts);
+        rootView = (View) findViewById(R.id.rootview);
 
         Intent intent = getIntent();
 
@@ -90,6 +103,8 @@ public class ProductActivity extends AppCompatActivity {
             contentValues.put(DataBaseQuery.VIEWED, "true");
             databaseManager.getInstance(ProductActivity.this).updateProductDetails(contentValues);
         }
+
+        executeRestApiSearch(productPojo.getProductName());
 
         if(databaseManager != null){
             databaseManager.close();
@@ -167,4 +182,46 @@ public class ProductActivity extends AppCompatActivity {
     }
 
 
+    private void executeRestApiSearch(String searchTerm){
+
+        ExecuteRestApiSearch executeRestApiSearc = new ExecuteRestApiSearch(ProductActivity.this, rootView, productPojo.getProductId());
+        executeRestApiSearc.executeRestApiSearch(searchTerm);
+
+    }
+
+    private void updateOrInsertDb(ArrayList<Products> products, String searchTerm){
+        for (Products product : products){
+            ContentValues contentValues = new ContentValues();
+            contentValues.put(DataBaseQuery.PRODUCT_ID, product.getProductId());
+            contentValues.put(DataBaseQuery.BRAND_NAME, product.getBrandName());
+            contentValues.put(DataBaseQuery.COLOR_ID, product.getColorId());
+            contentValues.put(DataBaseQuery.ORIGINAL_PRICE, product.getOriginalPrice());
+            contentValues.put(DataBaseQuery.PERCENT_OFF, product.getPercentOff());
+            contentValues.put(DataBaseQuery.PRICE, product.getPrice());
+            contentValues.put(DataBaseQuery.PRODUCT_NAME, product.getProductName());
+            contentValues.put(DataBaseQuery.PRODUCT_URL, product.getProductUrl());
+            contentValues.put(DataBaseQuery.STYLE_ID, product.getStyleId());
+            contentValues.put(DataBaseQuery.THUMBNAIL_IMAGE_URL, product.getThumbnailImageUrl());
+            contentValues.put(DataBaseQuery.SEARCH_TERM, searchTerm);
+            contentValues.put(DataBaseQuery.VIEWED, "false");
+
+            databaseManager.getInstance(ProductActivity.this).insertProductDetails(contentValues);
+        }
+
+    }
+
+    @Override
+    public void onResult(ArrayList<Products> products, String searchTerm) {
+
+        if (similarProductsRecyclerViewAdapter == null){
+            similarProductsRecyclerViewAdapter = new SimilarProductsRecyclerViewAdapter(ProductActivity.this, products, R.layout.recentlyviewed_list_item);
+            similarProducts.setAdapter(similarProductsRecyclerViewAdapter);
+        }
+        else{
+            similarProductsRecyclerViewAdapter.setProducts(products);
+            similarProductsRecyclerViewAdapter.notifyDataSetChanged();
+        }
+
+        updateOrInsertDb(products, searchTerm);
+    }
 }

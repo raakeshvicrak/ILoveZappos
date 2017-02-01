@@ -3,14 +3,11 @@ package com.zappos.raakeshpremkumar.ilovezappos;
 import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.Toolbar;
@@ -21,12 +18,8 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.WindowManager;
-import android.view.animation.TranslateAnimation;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -38,6 +31,8 @@ import com.zappos.raakeshpremkumar.ilovezappos.ProductsRecyclerView.ProductsRecy
 import com.zappos.raakeshpremkumar.ilovezappos.Utils.NetworkUtil;
 import com.zappos.raakeshpremkumar.ilovezappos.model.ProductAPIResponse;
 import com.zappos.raakeshpremkumar.ilovezappos.model.Products;
+import com.zappos.raakeshpremkumar.ilovezappos.rest.ApiResultInterface;
+import com.zappos.raakeshpremkumar.ilovezappos.rest.ExecuteRestApiSearch;
 import com.zappos.raakeshpremkumar.ilovezappos.rest.RetrofitAPIClient;
 import com.zappos.raakeshpremkumar.ilovezappos.rest.RetrofitAPIInterface;
 
@@ -47,7 +42,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class SearchActivity extends AppCompatActivity {
+public class SearchActivity extends AppCompatActivity implements ApiResultInterface{
 
     private EditText searchEditText;
     private final static String API_KEY = "b743e26728e16b81da139182bb2094357c31d331";
@@ -133,6 +128,24 @@ public class SearchActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    public void onResult(ArrayList<Products> products, String searchTerm) {
+
+        if (productsRecyclerViewAdapter == null){
+            productsRecyclerViewAdapter = new ProductsRecyclerViewAdapter(SearchActivity.this, products, R.layout.products_list_item);
+            products_recyclerView.setAdapter(productsRecyclerViewAdapter);
+        }
+        else{
+            productsRecyclerViewAdapter.setProducts(products);
+            productsRecyclerViewAdapter.notifyDataSetChanged();
+        }
+
+        updateOrInsertDb(products, searchTerm);
+
+        InputMethodManager imm = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
+        imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
+    }
+
     public class onVoiceActionListener implements View.OnClickListener{
 
         @Override
@@ -198,68 +211,10 @@ public class SearchActivity extends AppCompatActivity {
         }
     }
 
-    private void executeRestApiSearch(final String searchTerm){
-        if (API_KEY.isEmpty()){
-            Toast.makeText(SearchActivity.this, "API Key is empty!", Toast.LENGTH_LONG).show();
-        }
-        else{
+    private void executeRestApiSearch(String searchTerm){
 
-            if (NetworkUtil.isNetworkAvailable(SearchActivity.this)){
-                RetrofitAPIInterface apiInterface = RetrofitAPIClient.getClient().create(RetrofitAPIInterface.class);
-
-                Call<ProductAPIResponse> call = apiInterface.getTopSearchResults(searchTerm, API_KEY);
-                call.enqueue(new Callback<ProductAPIResponse>() {
-                    @Override
-                    public void onResponse(Call<ProductAPIResponse> call, Response<ProductAPIResponse> response) {
-                        ArrayList<Products> products = response.body().getResults();
-                        Toast.makeText(SearchActivity.this, "Number of products "+products.size(), Toast.LENGTH_LONG).show();
-                        for (Products productstemp: products){
-                            Log.e("response ", productstemp.getProductName());
-                        }
-
-                        if (productsRecyclerViewAdapter == null){
-                            productsRecyclerViewAdapter = new ProductsRecyclerViewAdapter(SearchActivity.this, products, R.layout.products_list_item);
-                            products_recyclerView.setAdapter(productsRecyclerViewAdapter);
-                        }
-                        else{
-                            productsRecyclerViewAdapter.setProducts(products);
-                            productsRecyclerViewAdapter.notifyDataSetChanged();
-                        }
-
-                        updateOrInsertDb(products, searchTerm);
-
-                        InputMethodManager imm = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
-                        imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
-                    }
-
-                    @Override
-                    public void onFailure(Call<ProductAPIResponse> call, Throwable t) {
-                        Toast.makeText(SearchActivity.this, ""+t.toString(), Toast.LENGTH_LONG).show();
-                    }
-                });
-            }
-            else{
-                Snackbar.make(parentLayout, "No Internet Connectivity!", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-                ArrayList<Products> products_list = DataBaseManager.getInstance(SearchActivity.this).retrieveTablerows(DataBaseQuery.TABLE_PRODUCT_DETAILS,
-                        DataBaseQuery.SEARCH_TERM, new String[]{searchTerm});
-
-                if (productsRecyclerViewAdapter == null){
-                    productsRecyclerViewAdapter = new ProductsRecyclerViewAdapter(SearchActivity.this, products_list, R.layout.products_list_item);
-                    products_recyclerView.setAdapter(productsRecyclerViewAdapter);
-                }
-                else{
-                    productsRecyclerViewAdapter.setProducts(products_list);
-                    productsRecyclerViewAdapter.notifyDataSetChanged();
-                }
-
-                updateOrInsertDb(products_list, searchTerm);
-
-                InputMethodManager imm = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
-                imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
-            }
-
-        }
+        ExecuteRestApiSearch executeRestApiSearc = new ExecuteRestApiSearch(SearchActivity.this, parentLayout, 0);
+        executeRestApiSearc.executeRestApiSearch(searchTerm);
     }
 
     private void updateOrInsertDb(ArrayList<Products> products, String searchTerm){
