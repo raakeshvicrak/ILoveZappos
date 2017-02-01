@@ -68,7 +68,7 @@
                         android:layout_height="wrap_content"
                         android:textStyle="bold"
                         android:textSize="25dp"
-                        android:maxLength="10"
+                        android:maxLength="15"
                         android:text="@={productPojo.brandName}"/>
 
                     <TextView
@@ -96,6 +96,7 @@
                         android:transitionName="productName"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:maxLength="30"
                         android:text="@={productPojo.productName}"/>
 
                     <TextView
@@ -124,8 +125,19 @@
 
                 </RelativeLayout>
 
-                <android.support.v7.widget.RecyclerView
+                <TextView
                     android:layout_below="@+id/percentoffparent"
+                    android:id="@+id/similaritemsparent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="20dp"
+                    android:padding="5dp"
+                    android:visibility="gone"
+                    android:layout_marginBottom="5dp"
+                    android:text="@string/similaritems_text"/>
+
+                <android.support.v7.widget.RecyclerView
+                    android:layout_below="@+id/similaritemsparent"
                     android:id="@+id/similarProducts"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

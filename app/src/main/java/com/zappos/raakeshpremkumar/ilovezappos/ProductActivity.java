@@ -1,6 +1,5 @@
 package com.zappos.raakeshpremkumar.ilovezappos;
 
-import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
@@ -20,14 +19,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.zappos.raakeshpremkumar.ilovezappos.Binding.ProductPojo;
 import com.zappos.raakeshpremkumar.ilovezappos.DB.DataBaseManager;
 import com.zappos.raakeshpremkumar.ilovezappos.DB.DataBaseQuery;
-import com.zappos.raakeshpremkumar.ilovezappos.ProductsRecyclerView.ProductsRecyclerViewAdapter;
 import com.zappos.raakeshpremkumar.ilovezappos.ProductsRecyclerView.SimilarProductsRecyclerViewAdapter;
 import com.zappos.raakeshpremkumar.ilovezappos.databinding.ContentProductBinding;
 import com.zappos.raakeshpremkumar.ilovezappos.model.Products;
@@ -38,7 +34,7 @@ import java.util.ArrayList;
 
 public class ProductActivity extends AppCompatActivity implements ApiResultInterface {
 
-    private TextView priceBefore;
+    private TextView priceBefore, similaritemsparent;
     private FloatingActionButton fab;
     private boolean addedToCart = false;
     private ProductPojo productPojo;
@@ -70,6 +66,7 @@ public class ProductActivity extends AppCompatActivity implements ApiResultInter
         priceBefore.setPaintFlags(priceBefore.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
         similarProducts = (RecyclerView) findViewById(R.id.similarProducts);
         rootView = (View) findViewById(R.id.rootview);
+        similaritemsparent = (TextView) findViewById(R.id.similaritemsparent);
 
         Intent intent = getIntent();
 
@@ -212,6 +209,10 @@ public class ProductActivity extends AppCompatActivity implements ApiResultInter
 
     @Override
     public void onResult(ArrayList<Products> products, String searchTerm) {
+
+        if (products.size() > 0){
+            similaritemsparent.setVisibility(View.VISIBLE);
+        }
 
         if (similarProductsRecyclerViewAdapter == null){
             similarProductsRecyclerViewAdapter = new SimilarProductsRecyclerViewAdapter(ProductActivity.this, products, R.layout.recentlyviewed_list_item);

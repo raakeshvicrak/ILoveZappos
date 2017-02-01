@@ -40,8 +40,8 @@
         <ImageView
             android:id="@+id/clearButton"
             android:src="@drawable/clear"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:tint="@color/red"
             android:visibility="gone"
             android:layout_gravity="end" />
@@ -49,8 +49,9 @@
         <ImageView
             android:id="@+id/voiceButton"
             android:src="@drawable/voice"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:tint="@color/blue"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:layout_gravity="end"/>
 
     </FrameLayout>

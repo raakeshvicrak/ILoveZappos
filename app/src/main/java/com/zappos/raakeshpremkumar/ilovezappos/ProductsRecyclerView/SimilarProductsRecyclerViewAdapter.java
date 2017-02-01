@@ -1,6 +1,8 @@
 package com.zappos.raakeshpremkumar.ilovezappos.ProductsRecyclerView;
 
 import android.app.Activity;
+import android.content.Intent;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.view.LayoutInflater;
@@ -11,6 +13,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.zappos.raakeshpremkumar.ilovezappos.Binding.ProductPojo;
+import com.zappos.raakeshpremkumar.ilovezappos.ProductActivity;
 import com.zappos.raakeshpremkumar.ilovezappos.R;
 import com.zappos.raakeshpremkumar.ilovezappos.model.Products;
 
@@ -53,7 +57,16 @@ public class SimilarProductsRecyclerViewAdapter extends RecyclerView.Adapter<Sim
 
         @Override
         public void onClick(View view) {
+            ProductPojo productPojo = new ProductPojo(products.get(getAdapterPosition()));
 
+            Intent intent = new Intent(this.activity, ProductActivity.class);
+            intent.putExtra("product", productPojo);
+
+            ActivityOptionsCompat options = ActivityOptionsCompat.
+                    makeSceneTransitionAnimation(activity, (View)recentlyviewed_productImage, "productImageTransition");
+            this.activity.finish();
+
+            this.activity.startActivity(intent, options.toBundle());
         }
     }
 
