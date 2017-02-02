@@ -5,4 +5,6 @@
     <string name="sale">SALE!</string>
     <string name="title_activity_product">ILoveZappos</string>
     <string name="similaritems_text">You might also like</string>
+
+    <string name="recentlyViewed">Recently Viewed Items</string>
 </resources>

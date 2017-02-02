@@ -46,7 +46,7 @@ public class ProductActivity extends AppCompatActivity implements ApiResultInter
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        //ContentProductBinding contentProductBinding1 = ContentProductBinding.inflate(getLayoutInflater());
         ContentProductBinding contentProductBinding = DataBindingUtil.setContentView(this, R.layout.content_product);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);

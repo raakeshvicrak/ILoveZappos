@@ -13,7 +13,6 @@ import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.Menu;
@@ -21,26 +20,19 @@ import android.view.MenuItem;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.zappos.raakeshpremkumar.ilovezappos.DB.DataBaseManager;
 import com.zappos.raakeshpremkumar.ilovezappos.DB.DataBaseQuery;
 import com.zappos.raakeshpremkumar.ilovezappos.ProductsRecyclerView.ProductsRecyclerViewAdapter;
-import com.zappos.raakeshpremkumar.ilovezappos.Utils.NetworkUtil;
-import com.zappos.raakeshpremkumar.ilovezappos.model.ProductAPIResponse;
+
 import com.zappos.raakeshpremkumar.ilovezappos.model.Products;
 import com.zappos.raakeshpremkumar.ilovezappos.rest.ApiResultInterface;
 import com.zappos.raakeshpremkumar.ilovezappos.rest.ExecuteRestApiSearch;
-import com.zappos.raakeshpremkumar.ilovezappos.rest.RetrofitAPIClient;
-import com.zappos.raakeshpremkumar.ilovezappos.rest.RetrofitAPIInterface;
 
 import java.util.ArrayList;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class SearchActivity extends AppCompatActivity implements ApiResultInterface{
 
@@ -54,6 +46,8 @@ public class SearchActivity extends AppCompatActivity implements ApiResultInterf
     private ProductsRecyclerViewAdapter productsRecyclerViewAdapter = null;
     private Toolbar toolbar;
     private int REQUEST_CODE = 6;
+    private TextView recentlyViewed;
+    private FrameLayout noInternetConnectivity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,8 +77,11 @@ public class SearchActivity extends AppCompatActivity implements ApiResultInterf
         products_recyclerView = (RecyclerView) findViewById(R.id.productsview);
         clearButton = (ImageView) findViewById(R.id.clearButton);
         voiceButton = (ImageView) findViewById(R.id.voiceButton);
+        recentlyViewed = (TextView) findViewById(R.id.recentlyViewed);
+        noInternetConnectivity = (FrameLayout) findViewById(R.id.noInternetConnectivity);
 
         products_recyclerView.setLayoutManager(new StaggeredGridLayoutManager(2, 1));
+        //products_recyclerView.setLayoutManager(new GridLayoutManager(SearchActivity.this, 2));
 
         loadProducts();
 
@@ -130,6 +127,15 @@ public class SearchActivity extends AppCompatActivity implements ApiResultInterf
 
     @Override
     public void onResult(ArrayList<Products> products, String searchTerm) {
+
+        if (products.size() == 0){
+            noInternetConnectivity.setVisibility(View.VISIBLE);
+            products_recyclerView.setVisibility(View.GONE);
+        }
+        else{
+            noInternetConnectivity.setVisibility(View.GONE);
+            products_recyclerView.setVisibility(View.VISIBLE);
+        }
 
         if (productsRecyclerViewAdapter == null){
             productsRecyclerViewAdapter = new ProductsRecyclerViewAdapter(SearchActivity.this, products, R.layout.products_list_item);
@@ -179,8 +185,17 @@ public class SearchActivity extends AppCompatActivity implements ApiResultInterf
         ArrayList<Products> products_list = DataBaseManager.getInstance(SearchActivity.this).retrieveTablerows(DataBaseQuery.TABLE_PRODUCT_DETAILS,
                 DataBaseQuery.VIEWED, new String[]{"true"});
 
-        if (products_list.size() > 0){
+        if (products_list.size() == 0){
+            noInternetConnectivity.setVisibility(View.VISIBLE);
+            products_recyclerView.setVisibility(View.GONE);
+        }
+        else{
+            noInternetConnectivity.setVisibility(View.GONE);
+            products_recyclerView.setVisibility(View.VISIBLE);
+        }
 
+        if (products_list.size() > 0){
+            recentlyViewed.setVisibility(View.VISIBLE);
             if (productsRecyclerViewAdapter == null){
                 productsRecyclerViewAdapter = new ProductsRecyclerViewAdapter(SearchActivity.this, products_list, R.layout.products_list_item);
                 products_recyclerView.setAdapter(productsRecyclerViewAdapter);
@@ -190,10 +205,11 @@ public class SearchActivity extends AppCompatActivity implements ApiResultInterf
                 productsRecyclerViewAdapter.notifyDataSetChanged();
             }
 
-            InputMethodManager imm = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
-            imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
+            /*InputMethodManager imm = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
+            imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);*/
         }
         else{
+            recentlyViewed.setVisibility(View.GONE);
             executeRestApiSearch("");
         }
     }
@@ -247,8 +263,10 @@ public class SearchActivity extends AppCompatActivity implements ApiResultInterf
         public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
             if (i == EditorInfo.IME_ACTION_SEARCH){
                 searchMade = true;
+                recentlyViewed.setVisibility(View.GONE);
                 getSupportActionBar().setDisplayHomeAsUpEnabled(true);
                 getSupportActionBar().setDisplayShowHomeEnabled(true);
+
                 executeRestApiSearch(searchEditText.getText().toString());
             }
             return false;

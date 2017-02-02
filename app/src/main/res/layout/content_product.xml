@@ -162,9 +162,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="end|bottom"
             android:layout_alignParentBottom="true"
-            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
             android:layout_margin="@dimen/fab_margin"
-            android:backgroundTint="@color/green"
             android:tint="@color/white"/>
 
     </android.support.design.widget.CoordinatorLayout>

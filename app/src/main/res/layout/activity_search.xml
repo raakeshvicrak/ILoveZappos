@@ -27,14 +27,48 @@
             layout="@layout/content_search"
             android:layout_below="@+id/toolbar"/>
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/productsview"
+        <TextView
             android:layout_below="@+id/searchParent"
-            android:background="@color/light_grey"
+            android:id="@+id/recentlyViewed"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content"
+            android:padding="5dp"
+            android:textSize="15dp"
+            android:textStyle="bold"
+            android:visibility="gone"
+            android:background="@color/light_grey"
+            android:text="@string/recentlyViewed"/>
 
-        </android.support.v7.widget.RecyclerView>
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/recentlyViewed">
+
+            <FrameLayout
+                android:id="@+id/noInternetConnectivity"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:textStyle="bold"
+                    android:textSize="30dp"
+                    android:src="@drawable/nointernetconnectiivty"/>
+
+            </FrameLayout>
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/productsview"
+                android:visibility="gone"
+                android:background="@color/light_grey"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+            </android.support.v7.widget.RecyclerView>
+
+        </FrameLayout>
 
     </RelativeLayout>
 

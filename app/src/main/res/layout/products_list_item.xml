@@ -33,6 +33,7 @@
         <ImageView
             android:id="@+id/productImage"
             android:transitionName="productImageTransition"
+            android:background="@mipmap/zapposmobile"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
