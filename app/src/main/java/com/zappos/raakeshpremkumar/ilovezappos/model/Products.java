@@ -4,6 +4,10 @@ package com.zappos.raakeshpremkumar.ilovezappos.model;
  * Created by raakeshpremkumar on 1/23/17.
  */
 
+/*
+ * Plain Old Java Object Class for storing the information about the products.
+ */
+
 public class Products {
 
     private String brandName;

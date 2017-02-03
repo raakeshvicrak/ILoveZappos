@@ -27,6 +27,9 @@ import java.util.ArrayList;
  * Created by raakeshpremkumar on 1/31/17.
  */
 
+/*
+ * Reccyler View Adapter that will be used to load the products in the ProductActivity Recyclerview for the similar products.
+ */
 public class SimilarProductsRecyclerViewAdapter extends RecyclerView.Adapter<SimilarProductsRecyclerViewAdapter.SimilarProductsViewHolder> {
 
     private Activity activity;
@@ -39,6 +42,9 @@ public class SimilarProductsRecyclerViewAdapter extends RecyclerView.Adapter<Sim
         this.rowLayout = rowLayout;
     }
 
+    /*
+     * View Holder for each item in the Recyclerview.
+     */
     public static class SimilarProductsViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
         private ImageView recentlyviewed_productImage;
@@ -68,7 +74,6 @@ public class SimilarProductsRecyclerViewAdapter extends RecyclerView.Adapter<Sim
             ActivityOptionsCompat options = ActivityOptionsCompat.
                     makeSceneTransitionAnimation(activity, (View)recentlyviewed_productImage, "productImageTransition");
             this.activity.finish();
-
             this.activity.startActivity(intent, options.toBundle());
         }
     }
@@ -87,8 +92,9 @@ public class SimilarProductsRecyclerViewAdapter extends RecyclerView.Adapter<Sim
     public void onBindViewHolder(final SimilarProductsViewHolder holder, int position) {
         Products product_object = products.get(position);
 
-        //Glide.with(activity).load(product_object.getThumbnailImageUrl()).into(holder.recentlyviewed_productImage);
-
+        /*
+         * Load the product images using Glide library.
+         */
         Glide.with(activity).load(product_object.getThumbnailImageUrl()).listener(new RequestListener<String, GlideDrawable>() {
             @Override
             public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {

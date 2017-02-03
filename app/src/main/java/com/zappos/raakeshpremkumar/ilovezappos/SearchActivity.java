@@ -5,8 +5,6 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
@@ -57,6 +55,17 @@ public class SearchActivity extends AppCompatActivity implements ApiResultInterf
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        searchEditText = (EditText) findViewById(R.id.searchEditText);
+        parentLayout = findViewById(R.id.rootview);
+        products_recyclerView = (RecyclerView) findViewById(R.id.productsview);
+        clearButton = (ImageView) findViewById(R.id.clearButton);
+        voiceButton = (ImageView) findViewById(R.id.voiceButton);
+        recentlyViewed = (TextView) findViewById(R.id.recentlyViewed);
+        noInternetConnectivity = (FrameLayout) findViewById(R.id.noInternetConnectivity);
+
+        /*
+         * Perform appropriate action when the back arrow in the toolbar is clicked.
+         */
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -72,34 +81,31 @@ public class SearchActivity extends AppCompatActivity implements ApiResultInterf
             }
         });
 
-        searchEditText = (EditText) findViewById(R.id.searchEditText);
-        parentLayout = findViewById(R.id.rootview);
-        products_recyclerView = (RecyclerView) findViewById(R.id.productsview);
-        clearButton = (ImageView) findViewById(R.id.clearButton);
-        voiceButton = (ImageView) findViewById(R.id.voiceButton);
-        recentlyViewed = (TextView) findViewById(R.id.recentlyViewed);
-        noInternetConnectivity = (FrameLayout) findViewById(R.id.noInternetConnectivity);
-
         products_recyclerView.setLayoutManager(new StaggeredGridLayoutManager(2, 1));
-        //products_recyclerView.setLayoutManager(new GridLayoutManager(SearchActivity.this, 2));
 
+        /*
+         * Function Call to load the reccylerview with recently viewed items if any or from API
+         */
         loadProducts();
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
-
+        /*
+         * Search Listener for the Search EditText.
+         */
         searchEditText.setOnEditorActionListener(new OnEditorActionListener());
 
+        /*
+         * Listener when the Cross button is clicked to clear the EditText.
+         */
         clearButton.setOnClickListener(new onClearActionListener());
 
+        /*
+         * Listener to invoke the Google Voice to enable voice based search
+         */
         voiceButton.setOnClickListener(new onVoiceActionListener());
 
+        /*
+         * EditText textwatcher to toggle between the voice and cross ImageView appropriately
+         */
         searchEditText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -125,6 +131,9 @@ public class SearchActivity extends AppCompatActivity implements ApiResultInterf
         });
     }
 
+    /*
+     * Interface Callback once the API is completed executing.
+     */
     @Override
     public void onResult(ArrayList<Products> products, String searchTerm) {
 
@@ -153,6 +162,9 @@ public class SearchActivity extends AppCompatActivity implements ApiResultInterf
         imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
     }
 
+    /*
+     * Listener that invoked the Google voice enabling user voice based search
+     */
     public class onVoiceActionListener implements View.OnClickListener{
 
         @Override
@@ -165,6 +177,9 @@ public class SearchActivity extends AppCompatActivity implements ApiResultInterf
         }
     }
 
+    /*
+     * gets called once the user is done speaking, the user speech is got and added to the search EditText
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data){
         if (requestCode == REQUEST_CODE && resultCode == RESULT_OK){
@@ -181,6 +196,9 @@ public class SearchActivity extends AppCompatActivity implements ApiResultInterf
         }
     }
 
+    /*
+     * Function that loads the reccylerview with recently viewed items if any or from API
+     */
     public void loadProducts(){
 
         ArrayList<Products> products_list = DataBaseManager.getInstance(SearchActivity.this).retrieveTablerows(DataBaseQuery.TABLE_PRODUCT_DETAILS,
@@ -198,9 +216,6 @@ public class SearchActivity extends AppCompatActivity implements ApiResultInterf
                 productsRecyclerViewAdapter.setProducts(products_list);
                 productsRecyclerViewAdapter.notifyDataSetChanged();
             }
-
-            /*InputMethodManager imm = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
-            imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);*/
         }
         else{
             recentlyViewed.setVisibility(View.GONE);
@@ -208,6 +223,9 @@ public class SearchActivity extends AppCompatActivity implements ApiResultInterf
         }
     }
 
+    /*
+     * Handling onBackPress to toggle to the main screen or close the app appropriately.
+     */
     @Override
     public void onBackPressed() {
         if (searchMade == true){
@@ -221,6 +239,9 @@ public class SearchActivity extends AppCompatActivity implements ApiResultInterf
         }
     }
 
+    /*
+     * Refresh the recyclerview recently viewed once the activity is resumed.
+     */
     @Override
     protected void onResume() {
         if (searchMade == false) {
@@ -229,12 +250,18 @@ public class SearchActivity extends AppCompatActivity implements ApiResultInterf
         super.onResume();
     }
 
+    /*
+     * Call to the RetroFit API to get the product list based on searchterm.
+     */
     private void executeRestApiSearch(String searchTerm){
 
         ExecuteRestApiSearch executeRestApiSearc = new ExecuteRestApiSearch(SearchActivity.this, parentLayout, 0);
         executeRestApiSearc.executeRestApiSearch(searchTerm);
     }
 
+    /*
+     * Update the database
+     */
     private void updateOrInsertDb(ArrayList<Products> products, String searchTerm){
         for (Products product : products){
             ContentValues contentValues = new ContentValues();
@@ -275,8 +302,10 @@ public class SearchActivity extends AppCompatActivity implements ApiResultInterf
         }
     }
 
+    /*
+     * Clear the Search EditText when the cross icon is clicked.
+     */
     class onClearActionListener implements View.OnClickListener{
-
         @Override
         public void onClick(View view) {
             searchEditText.setText("");
@@ -291,9 +320,6 @@ public class SearchActivity extends AppCompatActivity implements ApiResultInterf
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
         if (id == R.id.action_share) {

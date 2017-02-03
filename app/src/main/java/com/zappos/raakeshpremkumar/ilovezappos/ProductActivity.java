@@ -46,7 +46,7 @@ public class ProductActivity extends AppCompatActivity implements ApiResultInter
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //ContentProductBinding contentProductBinding1 = ContentProductBinding.inflate(getLayoutInflater());
+
         ContentProductBinding contentProductBinding = DataBindingUtil.setContentView(this, R.layout.content_product);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -78,14 +78,9 @@ public class ProductActivity extends AppCompatActivity implements ApiResultInter
             Bundle bundle = intent.getExtras();
             productPojo = (ProductPojo) bundle.getSerializable("product");
 
-            Log.e("productpojo ", productPojo.getBrandName());
-            if (contentProductBinding == null){
-                Log.e("null cont", "null");
-            }
             contentProductBinding.setProductPojo(productPojo);
         }
         else{
-            Log.e("last segment ",data.getLastPathSegment());
             ArrayList<Products> products_list = DataBaseManager.getInstance(ProductActivity.this).retrieveTablerows(DataBaseQuery.TABLE_PRODUCT_DETAILS,
                     DataBaseQuery.PRODUCT_ID, new String[]{data.getLastPathSegment()});
             if (products_list.size() > 0){
@@ -101,6 +96,9 @@ public class ProductActivity extends AppCompatActivity implements ApiResultInter
             databaseManager.getInstance(ProductActivity.this).updateProductDetails(contentValues);
         }
 
+        /*
+         * Execute this call to get the Similar items.
+         */
         executeRestApiSearch(productPojo.getProductName());
 
         if(databaseManager != null){
@@ -108,11 +106,13 @@ public class ProductActivity extends AppCompatActivity implements ApiResultInter
         }
 
         fab = (FloatingActionButton) findViewById(R.id.fab);
+
+        /*
+         * Trigger Animation when FAB is clicked.
+         */
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                /*Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();*/
                 fab.clearAnimation();
                 Animation animation = AnimationUtils.loadAnimation(ProductActivity.this, R.anim.pop_down);
                 fab.startAnimation(animation);
@@ -122,8 +122,6 @@ public class ProductActivity extends AppCompatActivity implements ApiResultInter
                 if(addedToCart == false){
                     addedToCart = true;
                     fab.setImageResource(R.drawable.done);
-                    //fab.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.white)));
-                    //fab.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.green)));
                 }
                 else{
                     addedToCart = false;
@@ -144,11 +142,11 @@ public class ProductActivity extends AppCompatActivity implements ApiResultInter
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
+        // Inflate the menu
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_search, menu);
 
-        Drawable yourdrawable = menu.getItem(0).getIcon(); // change 0 with 1,2 ...
+        Drawable yourdrawable = menu.getItem(0).getIcon();
         yourdrawable.mutate();
         yourdrawable.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_IN);
 
@@ -157,12 +155,8 @@ public class ProductActivity extends AppCompatActivity implements ApiResultInter
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_share) {
 
             // code to share the product with friends.
@@ -179,13 +173,17 @@ public class ProductActivity extends AppCompatActivity implements ApiResultInter
     }
 
 
+    /*
+     * Call to the RetroFit API to get the similar items.
+     */
     private void executeRestApiSearch(String searchTerm){
-
         ExecuteRestApiSearch executeRestApiSearc = new ExecuteRestApiSearch(ProductActivity.this, rootView, productPojo.getProductId());
         executeRestApiSearc.executeRestApiSearch(searchTerm);
-
     }
 
+    /*
+     * Database Update.
+     */
     private void updateOrInsertDb(ArrayList<Products> products, String searchTerm){
         for (Products product : products){
             ContentValues contentValues = new ContentValues();
@@ -207,6 +205,9 @@ public class ProductActivity extends AppCompatActivity implements ApiResultInter
 
     }
 
+    /*
+     * Interface Callback once the API is completed executing.
+     */
     @Override
     public void onResult(ArrayList<Products> products, String searchTerm) {
 

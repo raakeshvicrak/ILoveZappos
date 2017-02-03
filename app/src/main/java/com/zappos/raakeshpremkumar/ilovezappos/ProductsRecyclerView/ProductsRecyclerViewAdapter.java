@@ -35,12 +35,18 @@ import java.util.ArrayList;
  * Created by raakeshpremkumar on 1/23/17.
  */
 
+/*
+ * Reccyler View Adapter that will be used to load the products in the SearchActivity Recyclerview.
+ */
 public class ProductsRecyclerViewAdapter extends RecyclerView.Adapter<ProductsRecyclerViewAdapter.ProductsViewHolder> {
 
     private Activity activity;
     public static ArrayList<Products> products;
     private int rowLayout;
 
+    /*
+     * View Holder for each item in the Recyclerview.
+     */
     public static class ProductsViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
         private LinearLayout productLayout;
@@ -68,6 +74,9 @@ public class ProductsRecyclerViewAdapter extends RecyclerView.Adapter<ProductsRe
             productLayout.setOnClickListener(this);
         }
 
+        /*
+         * OnClick Listener for the items in the Recycler View.
+         */
         @Override
         public void onClick(View view) {
             ProductPojo productPojo = new ProductPojo(products.get(getAdapterPosition()));
@@ -77,8 +86,6 @@ public class ProductsRecyclerViewAdapter extends RecyclerView.Adapter<ProductsRe
 
             ActivityOptionsCompat options = ActivityOptionsCompat.
                     makeSceneTransitionAnimation(activity, (View)productImage, "productImageTransition");
-
-
             this.activity.startActivity(intent, options.toBundle());
         }
     }
@@ -131,7 +138,6 @@ public class ProductsRecyclerViewAdapter extends RecyclerView.Adapter<ProductsRe
         }
 
         // Load the Image of the product.
-        //Glide.with(activity).load(product_object.getThumbnailImageUrl()).into(holder.productImage);
         Glide.with(activity).load(product_object.getThumbnailImageUrl()).listener(new RequestListener<String, GlideDrawable>() {
             @Override
             public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {

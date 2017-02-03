@@ -11,8 +11,6 @@ import retrofit2.http.Query;
  */
 
 public interface RetrofitAPIInterface {
-
     @GET("Search?")
     Call<ProductAPIResponse> getTopSearchResults(@Query("term") String searchterm, @Query("key") String apiKey);
-
 }

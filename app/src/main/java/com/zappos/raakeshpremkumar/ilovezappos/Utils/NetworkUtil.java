@@ -14,6 +14,9 @@ public class NetworkUtil {
     private static NetworkInfo networkInfo;
     private static NetworkInfo.State state;
 
+    /*
+     * Check if the Internet is available and return boolean bvalues accordingly.
+     */
     public static boolean isNetworkAvailable(Context context){
         connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         networkInfo = connectivityManager.getActiveNetworkInfo();
@@ -25,7 +28,5 @@ public class NetworkUtil {
         state = networkInfo.getState();
 
         return (state == NetworkInfo.State.CONNECTED || state == NetworkInfo.State.CONNECTING);
-
     }
-
 }

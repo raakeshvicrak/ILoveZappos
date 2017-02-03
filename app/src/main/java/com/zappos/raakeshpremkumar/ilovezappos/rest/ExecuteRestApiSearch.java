@@ -20,6 +20,9 @@ import retrofit2.Response;
  * Created by raakeshpremkumar on 1/31/17.
  */
 
+/*
+ * Common Retrofit API class that executes all the API's and makes interface callbacks accordingly by sending the result.
+ */
 public class ExecuteRestApiSearch {
 
     private Activity activity;
@@ -75,8 +78,6 @@ public class ExecuteRestApiSearch {
                 });
             }
             else{
-                /*Snackbar.make(parentLayout, "No Internet Connectivity!", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();*/
                 ArrayList<Products> products_list = DataBaseManager.getInstance(activity).retrieveTablerows(DataBaseQuery.TABLE_PRODUCT_DETAILS,
                         DataBaseQuery.SEARCH_TERM, new String[]{searchTerm});
                 setProducts(products_list);
@@ -86,7 +87,6 @@ public class ExecuteRestApiSearch {
     }
 
     public void setProducts(ArrayList<Products> products){
-
         this.products = products;
     }
 }
