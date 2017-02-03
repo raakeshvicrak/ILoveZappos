@@ -141,6 +141,7 @@ public class SearchActivity extends AppCompatActivity implements ApiResultInterf
             productsRecyclerViewAdapter = new ProductsRecyclerViewAdapter(SearchActivity.this, products, R.layout.products_list_item);
             products_recyclerView.setAdapter(productsRecyclerViewAdapter);
         }
+
         else{
             productsRecyclerViewAdapter.setProducts(products);
             productsRecyclerViewAdapter.notifyDataSetChanged();
@@ -185,16 +186,9 @@ public class SearchActivity extends AppCompatActivity implements ApiResultInterf
         ArrayList<Products> products_list = DataBaseManager.getInstance(SearchActivity.this).retrieveTablerows(DataBaseQuery.TABLE_PRODUCT_DETAILS,
                 DataBaseQuery.VIEWED, new String[]{"true"});
 
-        if (products_list.size() == 0){
-            noInternetConnectivity.setVisibility(View.VISIBLE);
-            products_recyclerView.setVisibility(View.GONE);
-        }
-        else{
+        if (products_list.size() > 0){
             noInternetConnectivity.setVisibility(View.GONE);
             products_recyclerView.setVisibility(View.VISIBLE);
-        }
-
-        if (products_list.size() > 0){
             recentlyViewed.setVisibility(View.VISIBLE);
             if (productsRecyclerViewAdapter == null){
                 productsRecyclerViewAdapter = new ProductsRecyclerViewAdapter(SearchActivity.this, products_list, R.layout.products_list_item);
@@ -225,6 +219,14 @@ public class SearchActivity extends AppCompatActivity implements ApiResultInterf
         else{
             super.onBackPressed();
         }
+    }
+
+    @Override
+    protected void onResume() {
+        if (searchMade == false) {
+            loadProducts();
+        }
+        super.onResume();
     }
 
     private void executeRestApiSearch(String searchTerm){

@@ -13,6 +13,9 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.zappos.raakeshpremkumar.ilovezappos.Binding.ProductPojo;
 import com.zappos.raakeshpremkumar.ilovezappos.ProductActivity;
 import com.zappos.raakeshpremkumar.ilovezappos.R;
@@ -81,10 +84,24 @@ public class SimilarProductsRecyclerViewAdapter extends RecyclerView.Adapter<Sim
     }
 
     @Override
-    public void onBindViewHolder(SimilarProductsViewHolder holder, int position) {
+    public void onBindViewHolder(final SimilarProductsViewHolder holder, int position) {
         Products product_object = products.get(position);
 
-        Glide.with(activity).load(product_object.getThumbnailImageUrl()).into(holder.recentlyviewed_productImage);
+        //Glide.with(activity).load(product_object.getThumbnailImageUrl()).into(holder.recentlyviewed_productImage);
+
+        Glide.with(activity).load(product_object.getThumbnailImageUrl()).listener(new RequestListener<String, GlideDrawable>() {
+            @Override
+            public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
+                return false;
+            }
+
+            @Override
+            public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
+                holder.recentlyviewed_productImage.setBackgroundResource(0);
+                return false;
+            }
+        }).into(holder.recentlyviewed_productImage);
+
 
         holder.brandName.setText(Html.fromHtml(product_object.getBrandName()));
 
