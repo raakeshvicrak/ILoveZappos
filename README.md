@@ -23,4 +23,4 @@ I have tested the app in multiple real devices such as:
 2.	ASUS_Z00LD – Android 6.0.1
 3.	MI PAD Tablet – Android 4.4.4
 
-![alt tag] (ILoveZappos/Screenshots/Screenshot_20170210-212509.png)
+![alt tag] (https://github.com/raakeshvicrak/ILoveZappos/blob/master/Screenshots/Screenshot_20170210-212509.png)
