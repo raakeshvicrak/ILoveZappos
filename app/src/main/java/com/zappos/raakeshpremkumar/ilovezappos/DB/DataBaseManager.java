@@ -122,6 +122,7 @@ public class DataBaseManager extends SQLiteOpenHelper {
                 pojo_object.setPercentOff(cursor.getString(8));
                 pojo_object.setProductUrl(cursor.getString(9));
                 pojo_object.setProductName(cursor.getString(10));
+                pojo_object.setAddedToCart(cursor.getString(11));
                 rows.add((T)pojo_object);
             }while(cursor.moveToNext());
         }

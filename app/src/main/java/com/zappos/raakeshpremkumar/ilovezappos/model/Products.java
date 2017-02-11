@@ -20,11 +20,12 @@ public class Products {
     private String percentOff;
     private String productUrl;
     private String productName;
+    private String addedToCart;
 
     public Products(){}
 
     public Products(String brandName, String thumbnailImageUrl, long productId, String originalPrice, long styleId, long colorId,
-                    String price, String percentOff, String productUrl, String productName){
+                    String price, String percentOff, String productUrl, String productName, String addedToCart){
         this.brandName = brandName;
         this.thumbnailImageUrl = thumbnailImageUrl;
         this.productId = productId;
@@ -35,6 +36,7 @@ public class Products {
         this.percentOff = percentOff;
         this.productUrl = productUrl;
         this.productName = productName;
+        this.addedToCart = addedToCart;
     }
 
     public String getBrandName() {
@@ -115,5 +117,13 @@ public class Products {
 
     public void setProductName(String productName) {
         this.productName = productName;
+    }
+
+    public String getAddedToCart() {
+        return addedToCart;
+    }
+
+    public void setAddedToCart(String addedToCart) {
+        this.addedToCart = addedToCart;
     }
 }

@@ -10,8 +10,8 @@
         android:allowBackup="true"
         android:icon="@drawable/ilovezappos"
         android:label="@string/app_name"
-        android:supportsRtl="true"
         android:largeHeap="true"
+        android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
             android:name=".SearchActivity"
@@ -27,16 +27,24 @@
             android:name=".ProductActivity"
             android:label="@string/title_activity_product"
             android:theme="@style/AppTheme.NoActionBar">
-
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.BROWSABLE" />
                 <category android:name="android.intent.category.DEFAULT" />
-                <data android:scheme="tutsplus" android:host="deeplink"/>
-                <data android:scheme="http" android:host="zapp.me"/>
-            </intent-filter>
 
+                <data
+                    android:host="deeplink"
+                    android:scheme="tutsplus" />
+                <data
+                    android:host="zapp.me"
+                    android:scheme="http" />
+            </intent-filter>
         </activity>
+        <activity
+            android:name=".ShoppingCartActivity"
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

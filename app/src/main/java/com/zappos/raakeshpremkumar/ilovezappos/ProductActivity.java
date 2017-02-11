@@ -12,7 +12,6 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -122,10 +121,12 @@ public class ProductActivity extends AppCompatActivity implements ApiResultInter
                 if(addedToCart == false){
                     addedToCart = true;
                     fab.setImageResource(R.drawable.done);
+                    updateAddToCart("true");
                 }
                 else{
                     addedToCart = false;
                     fab.setImageResource(R.drawable.shoppingcart);
+                    updateAddToCart("false");
                 }
 
                 // animation of popping up.
@@ -140,15 +141,27 @@ public class ProductActivity extends AppCompatActivity implements ApiResultInter
 
     }
 
+    private void updateAddToCart(String updateValue){
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(DataBaseQuery.PRODUCT_ID, productPojo.getProductId());
+        contentValues.put(DataBaseQuery.ADDEDTOCART, updateValue);
+
+        databaseManager.getInstance(ProductActivity.this).updateProductDetails(contentValues);
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu_search, menu);
+        inflater.inflate(R.menu.menu_product, menu);
 
-        Drawable yourdrawable = menu.getItem(0).getIcon();
-        yourdrawable.mutate();
-        yourdrawable.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_IN);
+        Drawable drawable = menu.getItem(0).getIcon();
+        drawable.mutate();
+        drawable.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_IN);
+
+        Drawable drawablecart = menu.getItem(1).getIcon();
+        drawablecart.mutate();
+        drawablecart.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_IN);
 
         return super.onCreateOptionsMenu(menu);
     }
@@ -167,6 +180,16 @@ public class ProductActivity extends AppCompatActivity implements ApiResultInter
             startActivity(sendIntent);
 
             return true;
+        }
+
+        else if(id == R.id.shopping_cart){
+
+            // code to open the shopping cart.
+            Intent intent = new Intent(ProductActivity.this, ShoppingCartActivity.class);
+            startActivity(intent);
+
+            return true;
+
         }
 
         return super.onOptionsItemSelected(item);

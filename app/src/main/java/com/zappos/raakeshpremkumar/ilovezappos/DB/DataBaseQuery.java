@@ -21,10 +21,12 @@ public class DataBaseQuery {
     public static final String PRODUCT_NAME = "PRODUCTNAME";
     public static final String SEARCH_TERM = "SEARCHTERM";
     public static final String VIEWED = "VIEWED";
+    public static final String ADDEDTOCART = "ADDEDTOCART";
+
 
     public static final String CREATE_TABLE_PRODUCT_DETAILS = "CREATE TABLE " + TABLE_PRODUCT_DETAILS + "(" + S_NO
             + " INTEGER PRIMARY KEY, " + PRODUCT_ID + " TEXT," + BRAND_NAME + " TEXT," + THUMBNAIL_IMAGE_URL + " TEXT,"
             + ORIGINAL_PRICE + " TEXT," + STYLE_ID + " TEXT," + COLOR_ID + " TEXT," + PRICE + " TEXT," + PERCENT_OFF + " TEXT,"
-            + PRODUCT_URL + " TEXT," + PRODUCT_NAME + " TEXT," + SEARCH_TERM + " TEXT," + VIEWED + " TEXT)";
+            + PRODUCT_URL + " TEXT," + PRODUCT_NAME + " TEXT," + SEARCH_TERM + " TEXT," + VIEWED + " TEXT," + ADDEDTOCART + " TEXT DEFAULT 'false')";
 
 }

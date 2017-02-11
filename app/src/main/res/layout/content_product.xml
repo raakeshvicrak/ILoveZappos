@@ -48,7 +48,7 @@
                         android:transitionName="productImageTransition"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:background="@mipmap/zapposmobile"
+                        android:background="@mipmap/zapposmobileproduct"
                         app:image_url="@{productPojo.thumbnailImageUrl}"/>
 
                 </RelativeLayout>

@@ -3,6 +3,8 @@ package com.zappos.raakeshpremkumar.ilovezappos;
 import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Intent;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.support.v7.app.AppCompatActivity;
@@ -12,6 +14,7 @@ import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -314,16 +317,29 @@ public class SearchActivity extends AppCompatActivity implements ApiResultInterf
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        return true;
+        // Inflate the menu
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_search, menu);
+
+        Drawable drawablecart = menu.getItem(0).getIcon();
+        drawablecart.mutate();
+        drawablecart.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_IN);
+
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        if (id == R.id.action_share) {
+       if(id == R.id.shopping_cart){
+
+            // code to open the shopping cart.
+            Intent intent = new Intent(SearchActivity.this, ShoppingCartActivity.class);
+            startActivity(intent);
+
             return true;
+
         }
 
         return super.onOptionsItemSelected(item);
