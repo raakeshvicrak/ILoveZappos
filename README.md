@@ -32,17 +32,17 @@ The Screenshot of the app is as follows:
 
 <i><b>Detailed View of a product when clicked showcasing the similar products and the addToCart Floating Action Button along with the Share product:</b></i>
 
-![alt tag] (https://github.com/raakeshvicrak/ILoveZappos/blob/master/Screenshots/Screenshot_20170210-212520.png)
+<p align="center"><img src="https://github.com/raakeshvicrak/ILoveZappos/blob/master/Screenshots/Screenshot_20170210-212520.png" width="300"></p>
 
 <i><b>Google Voice search enabling the user to search for the product through speech:</b></i>
 
-![alt tag] (https://github.com/raakeshvicrak/ILoveZappos/blob/master/Screenshots/Screenshot_20170210-212956.png)
+<p align="center"><img src="https://github.com/raakeshvicrak/ILoveZappos/blob/master/Screenshots/Screenshot_20170210-212956.png" width="300"></p>
 
 <i><b>Share a product to friends – a magic link will be shared which when clicked by the user having the app installed already – the product will be directly opened and showed to the user.</b></i>
 
-![alt tag] (https://github.com/raakeshvicrak/ILoveZappos/blob/master/Screenshots/Screenshot_20170210-212555.png)
+<p align="center"><img src="https://github.com/raakeshvicrak/ILoveZappos/blob/master/Screenshots/Screenshot_20170210-212555.png" width="300"></p>
 
 <i><b>“Cart” showing the list of products added to cart. Items can be deleted from this view. The total cost of the cart is also displayed to the user.</b></i>
 
-![alt tag] (https://github.com/raakeshvicrak/ILoveZappos/blob/master/Screenshots/Screenshot_20170210-212509.png)
+<p align="center"><img src="https://github.com/raakeshvicrak/ILoveZappos/blob/master/Screenshots/Screenshot_20170210-212509.png" width="300"></p>
 
