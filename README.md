@@ -28,7 +28,7 @@ The Screenshot of the app is as follows:
 
 <i><b>Home Page containing the list of recently viewed products:</b></i>
 
-<img src="https://github.com/raakeshvicrak/ILoveZappos/blob/master/Screenshots/Screenshot_20170210-212529.png" width="48">
+<img src="https://github.com/raakeshvicrak/ILoveZappos/blob/master/Screenshots/Screenshot_20170210-212529.png" width="200">
 
 <i><b>Detailed View of a product when clicked showcasing the similar products and the addToCart Floating Action Button along with the Share product:</b></i>
 
